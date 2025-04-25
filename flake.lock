@@ -1,41 +1,66 @@
 {
-  description = "Flake para expor o newm a partir de um repositório customizado";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11"; # base do sistema
-    flake-utils.url = "github:numtide/flake-utils";    # utilitário de compatibilidade
-    newm-src = {
-      url = "github:jbuchermn/newm";                   # fonte original do newm
-      flake = false;                                   # o repositório não é um flake
-    };
-  };
-
-  outputs = { self, nixpkgs, flake-utils, newm-src, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
-      in {
-        packages.newm = pkgs.python3Packages.buildPythonPackage {
-          pname = "newm";
-          version = "unstable";
-          src = newm-src;
-
-          # Dependências do pyproject.toml do newm
-          propagatedBuildInputs = with pkgs.python3Packages; [
-            pywm
-            setuptools
-          ];
-
-          # Desabilita testes (caso falhem ou precisem de display)
-          doCheck = false;
-
-          meta = {
-            description = "Not Even a Window Manager";
-            homepage = "https://github.com/jbuchermn/newm";
-            license = pkgs.lib.licenses.mit;
-          };
-        };
-      });
+  "nodes": {
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1644229661,
+        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1712942765,
+        "narHash": "sha256-P7hdZtXRoUmBHzRkH7CBVIEyaHb5NK7BzFdNJc2z60E=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "0093a6c1cd7a3092eaf3439d1b8b5820d95b1a30",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "pywmpkg": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1714036105,
+        "narHash": "sha256-KnsjtzbdIYjOXu3h0+UNdGLrO7bcmcwlyb+5DNcqmvM=",
+        "owner": "jbuchermn",
+        "repo": "pywm",
+        "rev": "a59f3acb07b70a84e0b76164bb1f66764e8a0cea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jbuchermn",
+        "ref": "v0.3",
+        "repo": "pywm",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "pywmpkg": "pywmpkg"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
 }
